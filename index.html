@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<!-- Bootstrap CSS Reference -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- jQuery Library -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Firebase Reference -->
+<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase.js"></script>
+
+<!-- Moment.js Reference -->
+<script src="https://cdn.jsdelivr.net/npm/moment@2.19.1/moment.min.js"></script>
+
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Train Schedule App</title>
+  </head>
+
+
+  <!-- HTML PAGE LAYOUT / BootStrap -->
+
+  <body>
+
+    <!-- Creates Overall Grid --> 
+    <div class="container">
+
+    <!-- FIRST ROW: SEARCH TOOL SUMMARY AND DESCRIPTION --> 
+      <div class="row">
+
+        <div class="col-md-12">
+          <div class="jumbotron">
+            <h1><strong>Employee Data Management</strong></h1>
+          </div>
+        </div>
+
+      </div>
+
+
+    <!-- SECOND ROW: CURRENT TRAIN SCHEDULE TABLE --> 
+      <div class="row">
+
+        <!-- COLUMN 1 of 1: Contains table with train and next arrival info -->
+        <div class="col-md-12">
+
+
+          <div class="panel panel-primary">
+            <!-- Default panel contents -->
+            <div class="panel-heading"><strong>Current Train Schedule</strong></div>
+
+
+            <!-- Table -->
+        
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Train Name</th>
+                    <th>Destination</th>
+                    <th>Frequency (min)</th>
+                    <th>Next Arrival</th>
+                    <th>Minutes Away</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    <!-- THIRD ROW: ADD EMPLOYEES FORM--> 
+      <div class="row">
+
+        <!-- COLUMN 1 of 1: Contains input form to collect info to add to train schedule -->
+        <div class="col-md-12">
+
+
+          <div class="panel panel-primary">
+            <!-- Default panel contents -->
+            <div class="panel-heading"><strong>Add Train</strong></div>
+
+              <form style="padding: 10px">
+
+                <div class="form-group"> <!-- Train Name -->
+                  <label for="train-name" class="control-label">Train Name</label>
+                  <input type="text" class="form-control" id="train-name" name="Name" placeholder="">
+                </div>  
+
+                <div class="form-group"> <!-- Train Destination -->
+                  <label for="train-dest" class="control-label">Destination</label>
+                  <input type="text" class="form-control" id="train-dest" name="Dest" placeholder="">
+                </div>          
+                            
+                <div class="form-group"> <!-- Train Time Start (First Train of Day) -->
+                  <label for="train-start" class="control-label">First Train Time (HH:mm military time)</label>
+                  <input type="text" class="form-control" id="train-start" name="Start" placeholder="">
+                </div>  
+
+                <div class="form-group"> <!-- Train Frequency-->
+                  <label for="train-freq" class="control-label">Frequency (min)</label>
+                  <input type="text" class="form-control" id="train-freq" name="Freq" placeholder="">
+                </div>                  
+                                                                     
+                <div class="form-group"> <!-- Submit Button -->
+                  <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+                </div>     
+                
+              </form> 
+
+
+
+            </div>
+      </div>
+
+    </div>
+
+    </div> 
+
+<script>
+
+$(document).ready(function() {
+  console.log("Ready!");
+
+ // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDM0od4Hf1SrmzNwrNcNjgsMM7BQRcT5G4",
+    authDomain: "train-schedule-2c69a.firebaseapp.com",
+    databaseURL: "https://train-schedule-2c69a.firebaseio.com",
+    projectId: "train-schedule-2c69a",
+    storageBucket: "",
+    messagingSenderId: "714155119515"
+  };
+  firebase.initializeApp(config);
+
+var database = firebase.database();
+
+
+// database.ref().on("value", function(snapshot) {
+
+// var sv = snapshot.val();
+// console.log(sv);
+
+// for (var key in sv) {
+//     addRow(sv.key.dname,sv.key.drole,sv.key.dstart,sv.key.drate)
+// } 
+
+//   // If any errors are experienced, log them to console.
+// }, function(errorObject) {
+//   console.log("The read failed: " + errorObject.code);
+// });
+
+database.ref().on("child_added", function(childSnapshot) {
+var sv = childSnapshot.val();
+console.log("childAdded");
+addRow(sv.dateAdded, sv.dname, sv.ddest, sv.dstart, sv.dfreq);
+
+  // If any errors are experienced, log them to console.
+}, function(errorObject) {
+  console.log("The read failed: " + errorObject.code);
+});
+
+
+$("#submit").on("click", function(){
+    event.preventDefault();
+    var name = $("#train-name").val();
+    var dest = $("#train-dest").val();
+    var start = $("#train-start").val();
+    var freq = $("#train-freq").val();
+
+    database.ref().push({
+      dname: name,
+      ddest: dest,
+      dstart: start,
+      dfreq: freq,
+      dateAdded: firebase.database.ServerValue.TIMESTAMP
+    });
+
+});
+
+
+
+
+var addRow = function(dateAdded, name, dest, start, freq) {
+
+    // Calculated nextArrival
+    // var nextArrival = 
+
+    // Calculate minAway
+    // var minAway = 
+
+    //calculate months worked
+    // var monthsWorked = (dateAdded - start);
+
+    // var monthsWorked = moment(dateAdded).diff(start, "months");
+    // console.log(monthsWorked);
+
+    //calculate total paid
+    // var billed = (parseInt(rate) * parseInt(monthsWorked));
+    
+    var row = $('<tr>');
+    row.append('<td>' + name         + '</td>');
+    row.append('<td>' + dest         + '</td>');
+    row.append('<td>' + freq         + '</td>');
+    row.append('<td>' + nextArrival  + '</td>');
+    row.append('<td>' + minAway      + '</td>');
+    $('.table tbody').append(row);
+}
+
+
+});
+
+
+
+
+
+
+
+
+</script>
+
+
+<!--     <script src="./app.js"></script> -->    
+  </body>
+</html>
+
+
+
