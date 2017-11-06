@@ -123,6 +123,7 @@
 
 <script>
 
+// Initialize the DOM
 $(document).ready(function() {
 
  // Initialize Firebase
@@ -139,23 +140,15 @@ $(document).ready(function() {
 var database = firebase.database();
 
 
-// database.ref().on("value", function(snapshot) {
 
-// var sv = snapshot.val();
-// console.log(sv);
-
-// for (var key in sv) {
-//     addRow(sv.key.dname,sv.key.drole,sv.key.dstart,sv.key.drate)
-// } 
-
-//   // If any errors are experienced, log them to console.
-// }, function(errorObject) {
-//   console.log("The read failed: " + errorObject.code);
-// });
-
+// Create a listener for the Firebase database; so when a 
+// child element is added, it will grab a snapshot of each 
+// object in the database that was created and store it in "sv"
 database.ref().on("child_added", function(childSnapshot) {
 var sv = childSnapshot.val();
 
+// Call the addRow function passes the relevent values from the object (sv)
+// to be rendered in the table
 addRow(sv.dateAdded, sv.dname, sv.ddest, sv.dstart, sv.dfreq);
 
   // If any errors are experienced, log them to console.
@@ -164,6 +157,8 @@ addRow(sv.dateAdded, sv.dname, sv.ddest, sv.dstart, sv.dfreq);
 });
 
 
+// Create a listner for the submit button that grabs
+// relevent form values and writes them to the database
 $("#submit").on("click", function(){
     event.preventDefault();
     var name = $("#train-name").val();
@@ -183,12 +178,18 @@ $("#submit").on("click", function(){
 
 
 
-
+// addRow function receives the relevent values from the object (sv)
+// and renders them in the table (DOM)
 var addRow = function(dateAdded, name, dest, start, freq) {
 
 
-    // Train Frequency (in min) -- (freq)
+    //dateAdded is the timestap for when the object (train info) was added to Firebase
+    // name is the train name
+    // dest is the train destination
+    // start is the first train of the day
+    // freq is the frequency of train arrivals (in min)
 
+    // Train Frequency (in min) -- (freq)
     console.log(freq);
 
     // First Train Time -- (start)
