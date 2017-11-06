@@ -31,7 +31,7 @@
 
         <div class="col-md-12">
           <div class="jumbotron">
-            <h1><strong>Employee Data Management</strong></h1>
+            <h2><strong>Handy Dandy Train Schedule</strong></h2>
           </div>
         </div>
 
@@ -123,7 +123,6 @@
 <script>
 
 $(document).ready(function() {
-  console.log("Ready!");
 
  // Initialize Firebase
   var config = {
@@ -155,7 +154,7 @@ var database = firebase.database();
 
 database.ref().on("child_added", function(childSnapshot) {
 var sv = childSnapshot.val();
-console.log("childAdded");
+
 addRow(sv.dateAdded, sv.dname, sv.ddest, sv.dstart, sv.dfreq);
 
   // If any errors are experienced, log them to console.
@@ -186,27 +185,46 @@ $("#submit").on("click", function(){
 
 var addRow = function(dateAdded, name, dest, start, freq) {
 
-    // Calculated nextArrival
-    // var nextArrival = 
 
-    // Calculate minAway
-    // var minAway = 
+    // Train Frequency (in min) -- (freq)
 
-    //calculate months worked
-    // var monthsWorked = (dateAdded - start);
+    console.log(freq);
 
-    // var monthsWorked = moment(dateAdded).diff(start, "months");
-    // console.log(monthsWorked);
+    // First Train Time -- (start)
+    console.log(start);
 
-    //calculate total paid
-    // var billed = (parseInt(rate) * parseInt(monthsWorked));
-    
+    // First Time (pushed back 1 year to make sure it comes before current time)
+    var firstTimeConverted = moment(start, "hh:mm").subtract(1, "years");
+    console.log(firstTimeConverted);
+
+    // Current Time
+    var currentTime = moment();
+    console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    console.log("DIFFERENCE IN TIME: " + diffTime);
+
+    // Time apart (remainder)
+    var tRemainder = diffTime % freq;
+    console.log(tRemainder);
+
+    // Minute Until Train
+    var tMinutesTillTrain = freq - tRemainder;
+    console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+    // Next Train
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+    var arrivalTime = moment(nextTrain).format("hh:mm");
+    console.log("ARRIVAL TIME: " + arrivalTime);
+
+    // Insert values into table
     var row = $('<tr>');
-    row.append('<td>' + name         + '</td>');
-    row.append('<td>' + dest         + '</td>');
-    row.append('<td>' + freq         + '</td>');
-    row.append('<td>' + nextArrival  + '</td>');
-    row.append('<td>' + minAway      + '</td>');
+    row.append('<td>' + name                   + '</td>');
+    row.append('<td>' + dest                   + '</td>');
+    row.append('<td>' + freq                   + '</td>');
+    row.append('<td>' + arrivalTime            + '</td>');
+    row.append('<td>' + tMinutesTillTrain      + '</td>');
     $('.table tbody').append(row);
 }
 
@@ -214,16 +232,8 @@ var addRow = function(dateAdded, name, dest, start, freq) {
 });
 
 
-
-
-
-
-
-
 </script>
 
-
-<!--     <script src="./app.js"></script> -->    
   </body>
 </html>
 
